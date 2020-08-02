@@ -53,7 +53,7 @@ Now you can run bash script with example input like this:
 ```
 $ ./HF.sh H2O.txt out.txt
 ```
-Output an be find in out.txt and molecular orbitals grphs in pic folder.
+Output will be find in out.txt and molecular orbitals grqphs in pic folder.
 
 ## Input file
 
