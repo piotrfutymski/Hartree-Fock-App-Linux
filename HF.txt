@@ -1,0 +1,9 @@
+HF MO_GRAPHS DENSITY_GRAPH 
+*xyz 0 1
+F 	0.0000 	0.0000 	0.0000
+H 	0.0000 	0.0000 	0.9168 
+
+*
+*name HF *
+*plain yz *
+
