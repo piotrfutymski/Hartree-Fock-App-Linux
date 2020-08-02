@@ -57,7 +57,7 @@ $ ./HF.sh H2O.txt out.txt
 ## Input file
 
 For example:
-
+```
 HF MO_GRAPHS DENSITY_GRAPH 
 *xyz 0 1
 Li 	0.0000 	0.0000 	0.0000
@@ -66,5 +66,5 @@ H 	0.0000 	0.0000 	1.5949
 *
 *name LiH *
 *plain yz *
-
+```
 You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne ]
