@@ -48,11 +48,12 @@ $ pip install matplotlib
 $ mkdir pic
 ```
 
-Now you can run bash script with example input like:
+Now you can run bash script with example input like this:
 
 ```
 $ ./HF.sh H2O.txt out.txt
 ```
+Output an be find in out.txt and molecular orbitals grphs in pic folder.
 
 ## Input file
 
@@ -67,4 +68,5 @@ H 	0.0000 	0.0000 	1.5949
 *name LiH *
 *plain yz *
 ```
-You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne ]
+You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne ].
+All positions are in angstroms.
