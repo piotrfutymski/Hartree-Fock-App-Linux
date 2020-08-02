@@ -52,6 +52,7 @@ Now you can run bash script with example input like:
 
 ```
 $ ./HF.sh H2O.txt out.txt
+```
 
 ## Input file
 
