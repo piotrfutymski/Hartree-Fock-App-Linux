@@ -4,7 +4,7 @@
 * [General info](#general-info)
 * [Setup](#setup)
 * [Input file](#input-file)
-* [Program screenshot](#program-screenshot)
+* [H2O orbital](#H2O-orbital)
 
 ## General info
 
@@ -74,6 +74,6 @@ You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F N
 All positions are in angstroms.
 
 
-## Program screenshot
+## H2O orbital
 
-![alt text](https://github.com/piotrfutymski/NLSSolver/blob/master/screenshot.jpg)
+https://github.com/piotrfutymski/Hartree-Fock-App-Linux/blob/master/pic/H2O_2.png
