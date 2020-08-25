@@ -4,6 +4,7 @@
 * [General info](#general-info)
 * [Setup](#setup)
 * [Input file](#input-file)
+* [Program screenshot](#program-screenshot)
 
 ## General info
 
@@ -41,17 +42,18 @@ $ cd Hartree-Fock-Attempt-2
 $ cmake .
 $ make
 ```
-To run script you will need matplotlib and create folder pic:
+To run script you will need matplotlib and tornado:
 
 ```
 $ pip install matplotlib
-$ mkdir pic
+$ pip install tornado
 ```
 
 Now you can run bash script with example input like this:
 
 ```
-$ ./HF.sh H2O.txt out.txt
+$ chmod +x HF.sh
+$ ./HF.sh examples/H2O.txt out.txt
 ```
 Output will be find in out.txt and molecular orbitals grqphs in pic folder.
 
@@ -70,3 +72,8 @@ H 	0.0000 	0.0000 	1.5949
 ```
 You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne ].
 All positions are in angstroms.
+
+
+## Program screenshot
+
+![alt text](https://github.com/piotrfutymski/NLSSolver/blob/master/screenshot.jpg)
