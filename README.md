@@ -76,4 +76,4 @@ All positions are in angstroms.
 
 ## H2O orbital
 
-https://github.com/piotrfutymski/Hartree-Fock-App-Linux/blob/master/pic/H2O_2.png
+![alt text](https://github.com/piotrfutymski/Hartree-Fock-App-Linux/blob/master/pic/H2O_2.png)
