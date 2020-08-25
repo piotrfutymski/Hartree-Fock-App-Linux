@@ -91,6 +91,12 @@ void OutputCreator::createMOPlainFiles(Mol & mol, InputParser & parser)
 
     _xPoints = (maxX-minX)/parser.getSameplDensity();
     _yPoints = (maxY-minY)/parser.getSameplDensity();
+    if(_xPoints < _yPoints)
+        _xPoints = _yPoints;
+    else
+        _yPoints = _xPoints;
+    
+
     _xMin = minX;
     _yMin = minY;
 
@@ -177,6 +183,10 @@ void OutputCreator::createDPlainFile(Mol & mol, InputParser & parser)
 
     _xPoints = (maxX-minX)/parser.getSameplDensity();
     _yPoints = (maxY-minY)/parser.getSameplDensity();
+    if(_xPoints < _yPoints)
+        _xPoints = _yPoints;
+    else
+        _yPoints = _xPoints;
     _xMin = minX;
     _yMin = minY;
 
