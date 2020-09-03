@@ -37,8 +37,8 @@ $ sudo make install
 After this you can download repository:
 
 ```
-$ git clone https://github.com/piotrfutymski/Hartree-Fock-Attempt-2.git
-$ cd Hartree-Fock-Attempt-2
+$ git clone https://github.com/piotrfutymski/Hartree-Fock-App-Linux.git
+$ cd Hartree-Fock-App-Linux
 $ cmake .
 $ make
 ```
