@@ -15,4 +15,4 @@ H 	-2.1486 	1.2405 	0.0000
 *
 *name Benzene *
 *plain xy *
-*shift 0.2 *
+*shift 0.001 *

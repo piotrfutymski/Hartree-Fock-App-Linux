@@ -421,9 +421,9 @@ static double BV2[] =
 
 double BoysCalculator::boysBig(double x)
 {
-    //if(x > 50000)
-        return M_SQRTPI/(2*sqrt(x));
-    return M_SQRTPI/(2*sqrt(x)) - 1.0e-08*log(x);   // dla x > 13
+
+    return M_SQRTPI/(2*sqrt(x));
+    //return M_SQRTPI/(2*sqrt(x)) - 1.0e-08*log(x);   // dla x > 13
 }
 
 
