@@ -1,9 +1,9 @@
-#include"Boys.h"
-#include <iostream>
-double BoysCalculator::boysSmall(double x)
-{
+#include "GPUAccelerator.h"
+#define BLOCK_SIZE 16
 
-   static double BV[] = 
+__device__ double boysSmall(double x)
+{
+    static double BV[] = 
 {
 1.000000000000,
 0.967643312160,
@@ -404,7 +404,6 @@ static double BV2[] =
 0.001132018864,
 0.001088831574,
 };
-
     int a = int(x/0.1);
 
     double d = x - a * 0.1;
@@ -419,15 +418,15 @@ static double BV2[] =
     return BV[a] + BV1[a]*d + BV2[a]/2.0*d*d + D3/6.0*d*d*d;
 }
 
-double BoysCalculator::boysBig(double x)
+__device__ double boysBig(double x)
 {
-    //if(x > 50000)
+    if(x > 50000)
         return M_SQRTPI/(2*sqrt(x));
     return M_SQRTPI/(2*sqrt(x)) - 1.0e-08*log(x);   // dla x > 13
 }
 
 
-double BoysCalculator::boys(double x) 
+__device__ double boys(double x) 
 {   
     if(x == 0)
         return 1.0;
@@ -438,4 +437,157 @@ double BoysCalculator::boys(double x)
         return boysSmall(x);
     else
         return boysSmall(x) - x*2.5e-04;
+}
+
+__global__ void countSElement(double * primitives, double * SMat, int primitivesNum)
+{
+    int row = blockIdx.x*blockDim.x + threadIdx.x;
+    int collumn = blockIdx.y*blockDim.y + threadIdx.y;
+    if(row > collumn)
+        return;
+    if(row >= primitivesNum || collumn >= primitivesNum)
+        return;
+    int matPos1 = row * primitivesNum + collumn;
+    int matPos2 = collumn * primitivesNum + row;
+    double b = primitives[5*row] + primitives[5*collumn];
+    double B = primitives[5*row] * primitives[5*collumn];
+    double A = 4.0 * B / (b*b);
+    double x = primitives[5*row+2] - primitives[5*collumn + 2];
+    double y = primitives[5*row+3] - primitives[5*collumn + 3];
+    double z = primitives[5*row+4] - primitives[5*collumn + 4];
+    double R2 = x*x + y*y + z*z;
+    double res = pow(A, 0.75)* exp(-B*R2/b);
+    SMat[matPos1] = res;
+    SMat[matPos2] = res;
+}
+
+__device__ double countDPrimElement(double * primitives, double *SMat, int pnum, int p, int q, int r, int s)
+{
+	double Spq = SMat[p*pnum + q];
+	double Srs = SMat[r*pnum + s];
+	double Spqrs = Spq * Srs;
+	double ap = primitives[p*5];
+	double aq = primitives[q*5];
+	double ar = primitives[r*5];
+	double as = primitives[s*5];
+	double A = ap + aq;
+	double B = ar + as;
+	double AB = A + B;
+	double _A = 1.0/A;
+	double _B = 1.0/B;
+	double kx = _A*(ap*primitives[p*5 + 2]+ aq*primitives[q*5 + 2]);
+	double ky = _A*(ap*primitives[p*5 + 3]+ aq*primitives[q*5 + 3]);
+	double kz = _A*(ap*primitives[p*5 + 4]+ aq*primitives[q*5 + 4]);
+	double lx = _B*(ar*primitives[r*5 + 2]+ as*primitives[s*5 + 2]);
+	double ly = _B*(ar*primitives[r*5 + 3]+ as*primitives[s*5 + 3]);
+	double lz = _B*(ar*primitives[r*5 + 4]+ as*primitives[s*5 + 4]);
+	double xx = kx - lx;
+	double yy = ky - ly;
+	double zz = kz - lz;
+	double r2 = xx*xx + yy*yy + zz*zz;
+
+	return 2.0/M_SQRTPI * (sqrt(A*B))/sqrt(AB) * boys(A*B/AB * r2)*Spqrs;
+
+}
+
+__global__ void countDElement(int * info, double * primitives, double *SMat, double * Mat, int num, int pnum)
+{
+    int index = blockIdx.x*blockDim.x + threadIdx.x;
+    int num2 = num*num;
+    int num3 = num2*num;
+    int num4 = num3*num;
+    
+    if( index > num4)
+        return;
+
+    int value = index;
+    int s = value % num; 
+    value /= num;
+    int q = value % num;
+    value /= num;
+    int r = value % num;
+    value /= num;
+    int p = value % num;
+    if(p < q || s < r)
+        return;
+
+    int index2 = q*num3 + r*num2+ p*num + s;
+    int index3 = p*num3 + s*num2+ q*num + r;
+    int index4 = q*num3 + s*num2+ p*num + r;
+
+	int startP = 0;
+    if(p!=0)
+        startP = info[p - 1];
+    int endP = info[p];
+
+    int startQ = 0;
+    if(q!=0)
+        startQ = info[q - 1];
+	int endQ = info[q];
+	
+	int startR = 0;
+    if(r!=0)
+        startR = info[r- 1];
+	int endR = info[r];
+	
+	int startS = 0;
+    if(s!=0)
+        startS = info[s - 1];
+    int endS = info[s];
+
+	double res = 0.0;
+    for(int i = startP; i < endP; i++)
+    {
+		for(int j = startQ; j < endQ; j++)
+		{
+			for(int k = startR; k < endR; k++)
+			{
+				for(int l = startS; l < endS; l++)
+				{					
+					double r = countDPrimElement(primitives, SMat, pnum, i, j, k, l);
+					res +=primitives[i*5 + 1] * primitives[j*5 + 1] * primitives[k*5 + 1] * primitives[l*5 + 1] * r;
+					
+				}
+			}
+		}          
+	}
+	Mat[index] = res;
+    Mat[index2] = res;
+    Mat[index3] = res;
+    Mat[index4] = res;
+}
+
+
+__host__
+void calculateDIntegrals(double * orbitalData, int * contractedData, double * integralData, unsigned int baseSize, unsigned int primitiveSize)
+{
+    double * dOribtalData = nullptr;
+    int * dContractedData = nullptr;
+    double * d_S_Mat = nullptr;
+    double * dIntegralData = nullptr;
+
+    cudaMalloc((void**)&dOribtalData, primitiveSize * sizeof(double));
+    cudaMalloc((void**)&dContractedData, baseSize * sizeof(int));
+    cudaMalloc((void**)&d_S_Mat, primitiveSize*primitiveSize*sizeof(double));
+    cudaMalloc((void**)&dIntegralData, baseSize * baseSize * baseSize * baseSize *sizeof(double));
+
+    cudaMemcpy(dOribtalData, orbitalData, primitiveSize * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(dContractedData, contractedData, baseSize * sizeof(int), cudaMemcpyHostToDevice);
+
+    dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
+    dim3 dimGrid((primitiveSize + BLOCK_SIZE - 1)/BLOCK_SIZE, (primitiveSize + BLOCK_SIZE - 1)/BLOCK_SIZE);
+    countSElement<<<dimGrid, dimBlock>>>(dOribtalData, d_S_Mat, primitiveSize);
+    cudaDeviceSynchronize();
+
+    int numb = BLOCK_SIZE * BLOCK_SIZE;
+    int numg = (baseSize * baseSize * baseSize * baseSize + BLOCK_SIZE * BLOCK_SIZE - 1)/(BLOCK_SIZE * BLOCK_SIZE);
+    countDElement<<<numg,numb>>>(dContractedData, orbitalData, d_S_Mat, dIntegralData, baseSize, primitiveSize);
+    cudaDeviceSynchronize();
+
+    cudaMemcpy(integralData, dOribtalData, baseSize * baseSize * baseSize * baseSize  * sizeof(double), cudaMemcpyDeviceToHost);
+
+    cudaFree(dOribtalData);
+    cudaFree(dContractedData);
+    cudaFree(d_S_Mat);
+    cudaFree(dIntegralData);
 }

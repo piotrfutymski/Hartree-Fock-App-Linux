@@ -114,17 +114,10 @@ void BasisSet::calculateOneElectronHamiltonians()
 	for (int i = 0; i < _basisFucntion.size(); i++)
 	{
 		_H_Matrix[i].resize(i+1);
-		std::vector<std::future<void>> futures;
 		for (int j = 0; j <= i; j++)
 		{
-			auto wsk = &_H_Matrix[i][j];
-			auto bs = &_basisFucntion;
-			auto n = &_nucleons;
-			futures.push_back(std::async(std::launch::async, [wsk, i, j, bs, n]() {
-				*wsk = ((*bs)[i]).calculateHIntegral((*bs)[j], *n); }));
+			_H_Matrix[i][j] = _basisFucntion[i].calculateHIntegral(_basisFucntion[j], _nucleons);
 		}
-		for (auto& e : futures)
-			e.wait();
 	}
 
 }
@@ -136,45 +129,48 @@ void BasisSet::calculateOverlapIntegrals()
 	for (int i = 0; i < _basisFucntion.size(); i++)
 	{
 		_S_Matrix[i].resize(i + 1);
-		std::vector<std::future<void>> futures;
 		for (int j = 0; j <= i; j++)
 		{
-			auto wsk = &_S_Matrix[i][j];
-			auto bs = &_basisFucntion;
-			futures.push_back(std::async(std::launch::async, [wsk, i, j, bs]() {
-				*wsk = (*bs)[i].calculateOverlapIntegral((*bs)[j]); }));
+			_S_Matrix[i][j] = _basisFucntion[i].calculateOverlapIntegral(_basisFucntion[j]);
 		}
-		for (auto& e : futures)
-			e.wait();
 	}
 }
 
 void BasisSet::calculateTwoElectronIntegrals()
 {
-	_D_Matrix.resize(_basisFucntion.size());
-	for (int i = 0; i < _basisFucntion.size(); i++)
-	{
-		_D_Matrix[i].resize(_basisFucntion.size());
-		for (int j = 0; j < _basisFucntion.size(); j++)
-		{
-			_D_Matrix[i][j].resize(_basisFucntion.size());
-			for (int k = 0; k < _basisFucntion.size(); k++)
-			{
-				_D_Matrix[i][j][k].resize(_basisFucntion.size());
-				std::vector<std::future<void>> futures;
-				for (int l = 0; l < _basisFucntion.size(); l++)
-				{
-					auto wsk = &_D_Matrix[i][j][k][l];
-					auto bs = &_basisFucntion;
-					futures.push_back(std::async(std::launch::async, [wsk, i, j, k, l, bs]() {
-						*wsk = ContractedGTO::calulateTwoElectronIntegral((*bs)[i], (*bs)[j], (*bs)[k], (*bs)[l]); }));
-				}
-				for (auto& e : futures)
-					e.wait();
-			}
-		}
 
+	auto siz = _basisFucntion.size();
+
+	_D_Matrix = (double *)malloc(siz*siz*siz*siz*sizeof(double));
+	
+
+	double * gausianData = (double *)malloc(5 * _allPrimitives * sizeof(double));
+	int * info = (int*)malloc(siz * sizeof(int));
+	
+	int v = 0;
+	int sum = 0;
+	for(int i = 0; i <siz; ++i)
+	{
+		sum+=_basisFucntion[i].getPrimitives().size();
+		info[i] = sum;
+		for (auto & p: _basisFucntion[i].getPrimitives())
+		{
+			gausianData[5*v] = p.second.getalfa();
+			gausianData[5*v+1] = p.first;
+			auto pos = p.second.getR();
+			gausianData[5*v+2] = pos.x;
+			gausianData[5*v+3] = pos.y;
+			gausianData[5*v+4] = pos.z;
+			v+=5;
+		}
+		
 	}
+
+	calculateDIntegrals(gausianData , info, _D_Matrix, siz, _allPrimitives);
+
+	free(gausianData);
+	free(info);
+
 }
 
 void BasisSet::calculateIntegrals()
@@ -238,7 +234,8 @@ double BasisSet::getS(int i, int j)
 
 double BasisSet::getDI(int i, int j, int k, int l)
 {
-	return _D_Matrix[i][j][k][l];
+	auto siz = _basisFucntion.size();
+	return _D_Matrix[i*siz*siz*siz + j*siz*siz + k*siz + l];
 }
 
 double BasisSet::getFunctionValue(int n, const Position& p)const

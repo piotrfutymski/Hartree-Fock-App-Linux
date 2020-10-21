@@ -13,6 +13,8 @@ public:
 	static double calulateTwoElectronIntegral(const ContractedGTO& a, const ContractedGTO& b, const ContractedGTO& c, const ContractedGTO& d);
 	static double calulateTwoElectronIntegral(const ContractedGTO& a, const ContractedGTO& b, const ContractedGTO& c, const ContractedGTO& d, double Spq, double Srs);
 
+	const std::vector<std::pair<double, GaussianOrbital>>& getPrimitives()const{return _primitives;}
+
 private:
 
 	std::vector<std::pair<double, GaussianOrbital>> _primitives;

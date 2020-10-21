@@ -15,8 +15,8 @@ public:
 
 	void setalfa(double a);
 
-	Position getR();
-	double getalfa();
+	Position getR()const;
+	double getalfa()const;
 	double getNormalizationParam()const;
 
 	// Integrals

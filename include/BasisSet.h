@@ -3,10 +3,10 @@
 #include <iostream>
 #include <armadillo>
 #include <chrono>
-#include <future>
 #include <fstream>
 #include "Nucleon.h"
 #include "ContractedGTO.h"
+#include "GPUAccelerator.h"
 
 class BasisSetLoadException : public std::exception{
     const char * what () const throw () {
@@ -20,6 +20,7 @@ class BasisSet
 public:
 
 	BasisSet() {};
+	~BasisSet(){free (_D_Matrix);}
 
 	void createBasisSet(const std::vector<Nucleon> & nucleons);
 	void createTestBasisSet(const std::vector<Nucleon> & nucleons, double l, double s);
@@ -48,7 +49,7 @@ private:
 
 	std::vector<std::vector<double>> _H_Matrix;
 
-	std::vector<std::vector<std::vector<std::vector<double>>>> _D_Matrix;
+	double *_D_Matrix;
 
 	std::vector<Nucleon> _nucleons;
 

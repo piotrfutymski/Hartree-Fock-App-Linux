@@ -6,23 +6,19 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
 
     _logger.open(outputFile);
 
-    Mol mol;
-
-    if(_parser.getOptFlag())
-        this->opt2Computation();
-    else
-        mol = this->singlePointComputation();
+    Mol mol = std::move(this->singlePointComputation());
 
     _outputCreator.createOutputFile(_logger, mol, _parser);
+    _logger.close();
 
+
+    std::cout<<"Creating pictures, it can take few minutes...\n";
     if(_parser.getMOGraphFlag())
         _outputCreator.createMOPlainFiles(mol, _parser);
     if(_parser.getDGraphFlag())
         _outputCreator.createDPlainFile(mol, _parser);
 
     _outputCreator.createScriptOutputFile(mol, _parser);
-
-    _logger.close();
     
 }
 
