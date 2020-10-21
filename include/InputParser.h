@@ -62,7 +62,7 @@ private:
     double _cornerY{0};
     double _width{0};
     double _height{0};
-    double _sampleDencity{0.005};
+    double _sampleDencity{0.01};
 
     std::string _input;
     

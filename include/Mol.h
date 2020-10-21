@@ -44,6 +44,8 @@ public:
 	double getTotalEnergy()const;
     double getRepulsionEnergy()const;
     double getOribtalEnergy(int m)const;
+    double getHOMOEnergy()const;
+    double getLUMOEnergy()const;
     arma::vec getMolecularCoeficents(int m);
 	double countMolecularFunction(int m, const Position & p)const;
     double countMolecularFunction(int m, double x)const;

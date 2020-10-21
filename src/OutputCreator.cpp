@@ -40,6 +40,17 @@ void OutputCreator::createOutputFile(Logger & logger, Mol & mol, InputParser & p
         logger.log("\t");
     }
     logger.log("\n");
+    logger.log("HOMO energy:\t");
+    logger.log(std::to_string(mol.getHOMOEnergy()));
+    logger.log("\n");
+    logger.log("LUMO energy:\t");
+    logger.log(std::to_string(mol.getLUMOEnergy()));
+    logger.log("\n");
+    logger.log("Gap between HOMO and LUMO:\t");
+    logger.log(std::to_string(mol.getLUMOEnergy() - mol.getHOMOEnergy()));
+    logger.log("\t=\t");
+    logger.log(std::to_string(HARTREE_TO_ELECTRONOVOLTS*(mol.getLUMOEnergy() - mol.getHOMOEnergy())));
+    logger.log("eV\n");
     logger.log("--------------------------------------------------------------\n");
 }
 

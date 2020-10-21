@@ -17,7 +17,7 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
     mol.HFComputation(_logger);
     _logger.say("Drawing plots and finishing (for big molecules up to few minutes)\n");
     _outputCreator.createOutputFile(_logger, mol, _parser);
-
+    _logger.close();
     if(_parser.getMOGraphFlag())
         _outputCreator.createMOPlainFiles(mol, _parser);
     if(_parser.getDGraphFlag())
@@ -25,7 +25,6 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
 
     _outputCreator.createScriptOutputFile(mol, _parser);
 
-    _logger.close();
     
 }
 

@@ -148,7 +148,7 @@ void Mol::HFSelfConsistentFieldMethod(Logger & logger)
 			break;
 		}			
 	} 
-	
+
 	if(abs(oldE-newE) < ERROR)
 		logger.say("Lack of significant changes in energy\nEnd of SCF\n");
 }
@@ -219,6 +219,15 @@ double Mol::getRepulsionEnergy()const
 double Mol::getOribtalEnergy(int m)const
 {
 	return _orbitalEnergies(m);
+}
+
+double Mol::getHOMOEnergy()const
+{
+	return _orbitalEnergies(_MOcount - 1);
+}
+double Mol::getLUMOEnergy()const
+{
+	return _orbitalEnergies(_MOcount);
 }
 
 double Mol::getElectronicEnergy()const
