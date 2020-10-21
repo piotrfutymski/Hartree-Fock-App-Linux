@@ -133,6 +133,7 @@ void Mol::HFSelfConsistentFieldMethod(Logger & logger)
 		HFProcedure();
 		oldE = newE;
 		newE = this->getTotalEnergy();
+		std::cout<< "Loop["<<i+1<<"] energy: "<<newE<<"\n";
 
 		i++;
 
@@ -147,8 +148,8 @@ void Mol::HFSelfConsistentFieldMethod(Logger & logger)
 			break;
 		}			
 	} 
-
-	if(abs(oldE-newE) < 0.00001)
+	
+	if(abs(oldE-newE) < ERROR)
 		logger.say("Lack of significant changes in energy\nEnd of SCF\n");
 }
 

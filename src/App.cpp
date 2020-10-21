@@ -6,13 +6,16 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
 
     _logger.open(outputFile);
 
-    Mol mol;
+    Mol mol{_parser.getNucleons()};
 
-    if(_parser.getOptFlag())
-        this->opt2Computation();
-    else
-        mol = this->singlePointComputation();
+    if(_parser.getMOCount() != -1)
+        mol.setMOcount(_parser.getMOCount());
 
+    if(_parser.getApproxFlag())
+        mol.setApproxIntegrals(true);
+
+    mol.HFComputation(_logger);
+    _logger.say("Drawing plots and finishing (for big molecules up to few minutes)\n");
     _outputCreator.createOutputFile(_logger, mol, _parser);
 
     if(_parser.getMOGraphFlag())
@@ -27,19 +30,9 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
 }
 
 
-Mol App::singlePointComputation()
+void App::singlePointComputation()
 {
-    Mol molecule{_parser.getNucleons()};
 
-    if(_parser.getMOCount() != -1)
-        molecule.setMOcount(_parser.getMOCount());
-
-    if(_parser.getApproxFlag())
-        molecule.setApproxIntegrals(true);
-
-    molecule.HFComputation(_logger);
-
-    return molecule;
 }
 
 void App::opt2Computation()

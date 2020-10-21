@@ -151,30 +151,68 @@ void BasisSet::calculateOverlapIntegrals()
 
 void BasisSet::calculateTwoElectronIntegrals()
 {
-	_D_Matrix.resize(_basisFucntion.size());
-	for (int i = 0; i < _basisFucntion.size(); i++)
-	{
-		_D_Matrix[i].resize(_basisFucntion.size());
-		for (int j = 0; j < _basisFucntion.size(); j++)
-		{
-			_D_Matrix[i][j].resize(_basisFucntion.size());
-			for (int k = 0; k < _basisFucntion.size(); k++)
-			{
-				_D_Matrix[i][j][k].resize(_basisFucntion.size());
-				std::vector<std::future<void>> futures;
-				for (int l = 0; l < _basisFucntion.size(); l++)
-				{
-					auto wsk = &_D_Matrix[i][j][k][l];
-					auto bs = &_basisFucntion;
-					futures.push_back(std::async(std::launch::async, [wsk, i, j, k, l, bs]() {
-						*wsk = ContractedGTO::calulateTwoElectronIntegral((*bs)[i], (*bs)[j], (*bs)[k], (*bs)[l]); }));
-				}
-				for (auto& e : futures)
-					e.wait();
-			}
-		}
+	auto siz = _basisFucntion.size();
 
+	_D_Matrix = new double[siz*siz*siz*siz];
+	double * S_Matrix = new double[_allPrimitives*_allPrimitives];
+
+	double * gausianData = new double[5 * _allPrimitives];
+	int * info = new int[siz];
+
+	int v = 0;
+	int sum = 0;
+	for(int i = 0; i <siz; ++i)
+	{
+		sum+=_basisFucntion[i].getPrimitives().size();
+		info[i] = sum;
+		for (auto & p: _basisFucntion[i].getPrimitives())
+		{
+			gausianData[5*v] = p.second.getalfa();
+			gausianData[5*v+1] = p.first;
+			auto pos = p.second.getR();
+			gausianData[5*v+2] = pos.x;
+			gausianData[5*v+3] = pos.y;
+			gausianData[5*v+4] = pos.z;
+			v++;
+		}		
 	}
+
+	for (int i = 0; i < _allPrimitives; i++)
+	{
+		for (int j = 0; j <= i; j++)
+		{
+			double res = calculateSPrimitive(i, j, gausianData, _allPrimitives);
+			S_Matrix[i *_allPrimitives + j] = res;
+			S_Matrix[j * _allPrimitives + i] = res;
+		}	
+	}
+	
+
+
+	for (int p = 0; p < siz; p++)
+	{
+		for (int q = 0; q <= p; q++)
+		{
+			for (int r = 0; r < siz; r++)
+			{
+				for (int s = 0; s <= r; s++)
+				{
+					double val = this->calculateDContracted(p, q, r, s, info, gausianData, S_Matrix, siz, _allPrimitives);
+					int siz2 = siz*siz;
+					int siz3 = siz*siz2;
+					_D_Matrix[p*siz3 + r*siz2 + q*siz + s] = val;
+					_D_Matrix[q*siz3 + r*siz2 + p*siz + s] = val;
+					_D_Matrix[p*siz3 + s*siz2 + q*siz + r] = val;
+					_D_Matrix[q*siz3 + s*siz2 + p*siz + r] = val;
+				}			
+			}		
+		}		
+	}
+
+	delete[] gausianData;
+	delete[] info;
+	delete[] S_Matrix;
+
 }
 
 void BasisSet::calculateIntegrals()
@@ -238,10 +276,92 @@ double BasisSet::getS(int i, int j)
 
 double BasisSet::getDI(int i, int j, int k, int l)
 {
-	return _D_Matrix[i][j][k][l];
+	auto siz = _basisFucntion.size();
+	return _D_Matrix[i*siz*siz*siz + j*siz*siz + k*siz + l];
 }
 
 double BasisSet::getFunctionValue(int n, const Position& p)const
 {
 	return _basisFucntion[n].F_X(p).real();
+}
+
+double BasisSet::calculateDContracted(int p, int q, int r, int s, int *info, double * primitives, double * SMat, int num, int pnum)
+{
+	int startP = 0;
+    if(p!=0)
+        startP = info[p - 1];
+    int endP = info[p];
+
+    int startQ = 0;
+    if(q!=0)
+        startQ = info[q - 1];
+	int endQ = info[q];
+	
+	int startR = 0;
+    if(r!=0)
+        startR = info[r- 1];
+	int endR = info[r];
+	
+	int startS = 0;
+    if(s!=0)
+        startS = info[s - 1];
+    int endS = info[s];
+
+	double res = 0.0;
+    for(int i = startP; i < endP; i++)
+    {
+		for(int j = startQ; j < endQ; j++)
+		{
+			for(int k = startR; k < endR; k++)
+			{
+				for(int l = startS; l < endS; l++)
+				{					
+					double r = calculateDPrimitive(i, j, k, l, pnum, SMat, primitives);
+					res +=primitives[i*5 + 1] * primitives[j*5 + 1] * primitives[k*5 + 1] * primitives[l*5 + 1] * r;
+					
+				}
+			}
+		}          
+	}
+	return res;
+}
+
+double BasisSet::calculateDPrimitive(int p, int q, int r, int s, int pnum, double * SMat, double * primitives)
+{
+	double Spq = SMat[p*pnum + q];
+	double Srs = SMat[r*pnum + s];
+	double Spqrs = Spq * Srs;
+	double ap = primitives[p*5];
+	double aq = primitives[q*5];
+	double ar = primitives[r*5];
+	double as = primitives[s*5];
+	double A = ap + aq;
+	double B = ar + as;
+	double AB = A + B;
+	double _A = 1.0/A;
+	double _B = 1.0/B;
+	double kx = _A*(ap*primitives[p*5 + 2]+ aq*primitives[q*5 + 2]);
+	double ky = _A*(ap*primitives[p*5 + 3]+ aq*primitives[q*5 + 3]);
+	double kz = _A*(ap*primitives[p*5 + 4]+ aq*primitives[q*5 + 4]);
+	double lx = _B*(ar*primitives[r*5 + 2]+ as*primitives[s*5 + 2]);
+	double ly = _B*(ar*primitives[r*5 + 3]+ as*primitives[s*5 + 3]);
+	double lz = _B*(ar*primitives[r*5 + 4]+ as*primitives[s*5 + 4]);
+	double xx = kx - lx;
+	double yy = ky - ly;
+	double zz = kz - lz;
+	double r2 = xx*xx + yy*yy + zz*zz;
+
+	return 2.0/M_SQRTPI * (sqrt(A*B))/sqrt(AB) * BoysCalculator::boys(A*B/AB * r2)*Spqrs;
+}
+
+double BasisSet::calculateSPrimitive(int row, int collumn, double * primitives, int primitivesNum)
+{
+	 double b = primitives[5*row] + primitives[5*collumn];
+    double B = primitives[5*row] * primitives[5*collumn];
+    double A = 4.0 * B / (b*b);
+    double x = primitives[5*row+2] - primitives[5*collumn + 2];
+    double y = primitives[5*row+3] - primitives[5*collumn + 3];
+    double z = primitives[5*row+4] - primitives[5*collumn + 4];
+    double R2 = x*x + y*y + z*z;
+    return pow(A, 0.75)* exp(-B*R2/b);
 }

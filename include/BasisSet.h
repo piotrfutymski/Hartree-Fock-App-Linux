@@ -19,8 +19,8 @@ class BasisSet
 {
 public:
 
-	BasisSet() {delete[] _D_Matrix;};
-
+	BasisSet() {};
+	~BasisSet(){delete[] _D_Matrix;};
 	BasisSet(const BasisSet & b) = delete;
 
 	void createBasisSet(const std::vector<Nucleon> & nucleons);
@@ -50,7 +50,7 @@ private:
 
 	std::vector<std::vector<double>> _H_Matrix;
 
-	double * _D_Matrix;
+	double * _D_Matrix = nullptr;
 
 	std::vector<Nucleon> _nucleons;
 
@@ -64,8 +64,9 @@ private:
 	void calculateOverlapIntegrals();
 	void calculateTwoElectronIntegrals();
 
-	void calculateDContracted();
-	double calculateDPrimitive();
+	double calculateDContracted(int p, int q, int r, int s, int *info, double * primitives, double * SMat, int num, int pnum);
+	double calculateDPrimitive(int p, int q, int r, int s, int pnum, double * SMat, double * primitives);
 
+	double calculateSPrimitive(int row, int collumn, double * primitives, int primitivesNum);
 };
 

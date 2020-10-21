@@ -23,7 +23,7 @@ private:
 
 private:
 
-    Mol singlePointComputation();
+    void singlePointComputation();
 
     void opt2Computation();
 

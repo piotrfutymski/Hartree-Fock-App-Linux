@@ -6,12 +6,12 @@ void GaussianOrbital::setalfa(double a)
 	this->recalculateNormalizationParam();
 }
 
-Position GaussianOrbital::getR()
+Position GaussianOrbital::getR()const
 {
 	return R0;
 }
 
-double GaussianOrbital::getalfa()
+double GaussianOrbital::getalfa()const
 {
 	return alfa;
 }
