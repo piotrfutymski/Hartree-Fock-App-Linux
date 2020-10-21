@@ -19,7 +19,9 @@ class BasisSet
 {
 public:
 
-	BasisSet() {};
+	BasisSet() {delete[] _D_Matrix;};
+
+	BasisSet(const BasisSet & b) = delete;
 
 	void createBasisSet(const std::vector<Nucleon> & nucleons);
 	void createTestBasisSet(const std::vector<Nucleon> & nucleons, double l, double s);
@@ -48,7 +50,7 @@ private:
 
 	std::vector<std::vector<double>> _H_Matrix;
 
-	std::vector<std::vector<std::vector<std::vector<double>>>> _D_Matrix;
+	double * _D_Matrix;
 
 	std::vector<Nucleon> _nucleons;
 
@@ -61,6 +63,9 @@ private:
 	void calculateOneElectronHamiltonians();
 	void calculateOverlapIntegrals();
 	void calculateTwoElectronIntegrals();
+
+	void calculateDContracted();
+	double calculateDPrimitive();
 
 };
 
