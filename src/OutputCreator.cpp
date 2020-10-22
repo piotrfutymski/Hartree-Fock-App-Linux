@@ -238,9 +238,6 @@ void OutputCreator::createDPlainFile(Mol & mol, InputParser & parser)
 void OutputCreator::createScriptOutputFile(Mol & mol, InputParser & parser)
 {
     std::fstream file("int/pyinp.txt", std::ios::trunc | std::ios::out);
-    file << mol.getMOcount()<<"\n";
-    file << _xMin<<"\n"<<_yMin<<"\n"<<_xPoints<<"\n"<<_yPoints<<"\n"<<parser.getSameplDensity()<<"\n";
-    file << parser.getMOName()<<"\n";
     if(parser.getMOGraphFlag() && parser.getDGraphFlag())
     {
         file << "t\n";
@@ -257,6 +254,10 @@ void OutputCreator::createScriptOutputFile(Mol & mol, InputParser & parser)
     {
         file << "n\n";
     }
+    file << mol.getMOcount()<<"\n";
+    file << _xMin<<"\n"<<_yMin<<"\n"<<_xPoints<<"\n"<<_yPoints<<"\n"<<parser.getSameplDensity()<<"\n";
+    file << parser.getMOName()<<"\n";
+
     
     file.close();
 }
