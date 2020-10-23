@@ -5,6 +5,7 @@ CMakeFiles/*
 *.png
 out.txt
 xxx.txt
+test.txt
 .*
 src/__pycache__
 !.gitignores

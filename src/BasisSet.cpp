@@ -2,14 +2,14 @@
 #include "Mol.h"
 
 
-void BasisSet::createBasisSet(const std::vector<Nucleon>& nucleons)
+void BasisSet::createBasisSet(const std::vector<Nucleon>& nucleons, bool f)
 {
 	_nucleons = nucleons;
 	_size = 0;
 	_allPrimitives = 0;
 	for (int i = 0; i < nucleons.size(); i++)
 	{
-		auto date = this->loadAOs(_nucleons[i].charge);
+		auto date = this->loadAOs(_nucleons[i].charge, f);
 		for (int j = 0; j < date.size(); j++)
 		{
 			_basisFucntion.push_back({});
@@ -29,84 +29,6 @@ void BasisSet::createBasisSet(const std::vector<Nucleon>& nucleons)
 	}
 }
 
-void BasisSet::createTestBasisSet(const std::vector<Nucleon>& nucleons, double b, double s)
-{
-	_nucleons = nucleons;
-	for (int i = 0; i < nucleons.size(); i++)
-	{
-		auto date = this->loadAOs(_nucleons[i].charge);
-		//if (nucleons[i].charge == 8)
-		{
-			double tab[] = { 4.72797,  1.19034 ,  0.359412, 0.126751 };
-
-			double c = sqrt(1 / (2 - 2 * exp(-s*b*b)));
-			date.push_back({
-				{s * tab[0], c , {b / sqrt(2 * tab[0]),0,0}},
-				{s * tab[0], -c, {-b / sqrt(2 * tab[0]),0,0}}
-				});
-			date.push_back({
-				{s * tab[1], c , {b / sqrt(2 * tab[1]),0,0}},
-				{s * tab[1], -c, {-b / sqrt(2 * tab[1]),0,0}}
-				});
-			date.push_back({
-				{s * tab[2], c , {b / sqrt(2 * tab[2]),0,0}},
-				{s * tab[2], -c, {-b / sqrt(2 * tab[2]),0,0}}
-				});
-			date.push_back({
-				{s * tab[3], c , {b / sqrt(2 * tab[3]),0,0}},
-				{s * tab[3], -c, {-b / sqrt(2 * tab[3]),0,0}}
-				});
-			date.push_back({
-				{s * tab[0], c , {0,b / sqrt(2 * tab[0]),0}},
-				{s * tab[0], -c, {0,-b / sqrt(2 * tab[0]),0}}
-				});
-			date.push_back({
-				{s * tab[1], c , {0,b / sqrt(2 * tab[1]),0}},
-				{s * tab[1], -c, {0,-b / sqrt(2 * tab[1]),0}}
-				});
-			date.push_back({
-				{s * tab[2], c , {0,b / sqrt(2 * tab[2]),0}},
-				{s * tab[2], -c, {0,-b / sqrt(2 * tab[2]),0}}
-				});
-			date.push_back({
-				{s * tab[3], c , {0,b / sqrt(2 * tab[3]),0}},
-				{s * tab[3], -c, {0,-b / sqrt(2 * tab[3]),0}}
-				});
-			date.push_back({
-				{s * tab[0], c , {0,0,b / sqrt(2 * tab[0])}},
-				{s * tab[0], -c, {0,0,-b / sqrt(2 * tab[0])}}
-				});
-			date.push_back({
-				{s * tab[1], c , {0,0,b / sqrt(2 * tab[1])}},
-				{s * tab[1], -c, {0,0,-b / sqrt(2 * tab[1])}}
-				});
-			date.push_back({
-				{s * tab[2], c , {0,0,b / sqrt(2 * tab[2])}},
-				{s * tab[2], -c, {0,0,-b / sqrt(2 * tab[2])}}
-				});
-			date.push_back({
-				{s * tab[3], c , {0,0,b / sqrt(2 * tab[3])}},
-				{s * tab[3], -c, {0,0,-b / sqrt(2 * tab[3])}}
-				});
-		}	
-		for (int j = 0; j < date.size(); j++)
-		{
-			_basisFucntion.push_back({});
-			for (int k = 0; k < date[j].size(); k++)
-			{
-				(_basisFucntion.end() - 1)->addPrimitive(
-					std::get<1>(date[j][k]), {
-						 nucleons[i].p + std::get<2>(date[j][k]),
-						 std::get<0>(date[j][k])
-					}
-				);
-			}		
-		}
-
-		//this->saveAOs(date, _nucleons[i].charge);
-	}
-
-}
 
 void BasisSet::calculateOneElectronHamiltonians()
 {
@@ -222,10 +144,15 @@ void BasisSet::calculateIntegrals()
 	this->calculateTwoElectronIntegrals();
 }
 
-std::vector<std::vector<std::tuple<double, double, Position>>> BasisSet::loadAOs(int n)
+std::vector<std::vector<std::tuple<double, double, Position>>> BasisSet::loadAOs(int n, bool f)
 {
 	std::vector<std::vector<std::tuple<double, double, Position>>> res;
-	std::fstream file("basis_set/AO" + std::to_string(n) +".txt", std::ios::in);
+	std::fstream file;
+	if(f)
+		file.open("basis_set2/AO" + std::to_string(n) +".txt", std::ios::in);
+	else
+		file.open("basis_set1/AO" + std::to_string(n) +".txt", std::ios::in);
+	
 	if (!file.is_open())
 		throw BasisSetLoadException();
 	int na;

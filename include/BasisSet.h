@@ -23,12 +23,11 @@ public:
 	~BasisSet(){delete[] _D_Matrix;};
 	BasisSet(const BasisSet & b) = delete;
 
-	void createBasisSet(const std::vector<Nucleon> & nucleons);
-	void createTestBasisSet(const std::vector<Nucleon> & nucleons, double l, double s);
+	void createBasisSet(const std::vector<Nucleon> & nucleons, bool f);
 
 	void calculateIntegrals();
 
-	std::vector<std::vector<std::tuple<double, double, Position>>> loadAOs(int n);
+	std::vector<std::vector<std::tuple<double, double, Position>>> loadAOs(int n, bool f);
 	//void saveAOs(const std::vector<std::vector<std::tuple<double, double, Position>>>&, int n);
 
 	int getSize();

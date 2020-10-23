@@ -112,9 +112,9 @@ bool InputParser::getDGraphFlag()const
 std::string InputParser::readHeader(std::ifstream & file)
 {
     auto tmp = this->read(file);
-    if(tmp == "HF")
+    if(tmp == "HF" || tmp == "HF1")
         ;
-    else if(tmp == "HF_OPT2")
+    else if(tmp == "HF2")
         _HFOPT2 = true;
     else
         throw InputFileException();

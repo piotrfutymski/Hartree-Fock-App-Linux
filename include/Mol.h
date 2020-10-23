@@ -32,7 +32,7 @@ public:
 
     // the most important function - it makes all computation for molecule
 
-    void HFComputation(Logger & logger);
+    void HFComputation(Logger & logger, bool f = false);
 
     //
 
@@ -100,7 +100,7 @@ private:
 
     //loading set from files
 
-	void initBasisSet(Logger & logger);
+	void initBasisSet(Logger & logger, bool f);
 
     //calculating Integrals
 

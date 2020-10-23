@@ -14,8 +14,9 @@ void App::run(const std::string & inputFile, const std::string & outputFile)
     if(_parser.getApproxFlag())
         mol.setApproxIntegrals(true);
 
-    mol.HFComputation(_logger);
-    _logger.say("Drawing plots and finishing (for big molecules up to few minutes)\n");
+    mol.HFComputation(_logger, _parser.getOptFlag());
+    if(_parser.getDGraphFlag() || _parser.getMOGraphFlag())
+        _logger.say("Drawing plots and finishing (for big molecules up to few minutes)\n");
     _outputCreator.createOutputFile(_logger, mol, _parser);
     _logger.close();
     if(_parser.getMOGraphFlag())

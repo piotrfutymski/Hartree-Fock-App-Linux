@@ -47,12 +47,12 @@ void Mol::setApproxIntegrals(bool approx)
     _approxIntegrals = approx;
 }
 
-void Mol::HFComputation(Logger & logger)
+void Mol::HFComputation(Logger & logger, bool f)
 {
     logger.say("Starting HF Computations for the molecule\n");
 	auto start = std::chrono::steady_clock::now();
 	try{
-		 this->initBasisSet(logger);
+		 this->initBasisSet(logger, f);
 	}catch (const std::exception & e){
             throw BasisSetException();
 			return;
@@ -77,11 +77,11 @@ bool Mol::computationDone()const
 	return _computationDone;
 }
 
-void Mol::initBasisSet(Logger & logger)
+void Mol::initBasisSet(Logger & logger, bool f)
 {
 	logger.say("Loading basis set...\n");
 
-	_basisSet.createBasisSet(_nucleons);
+	_basisSet.createBasisSet(_nucleons, f);
 	_baseSize = _basisSet.getSize();
 	this->setMOcount(_MOcount);
 	_FMatrix.resize(_baseSize, _baseSize);
