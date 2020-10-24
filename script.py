@@ -61,7 +61,6 @@ if(dd or pp):
             ax.axis([x.min(), x.max(), y.min(), y.max()])
             fig.colorbar(c, ax=ax)
             plt.savefig("pic/"+name+"_"+str(a)+".png")
-            plt.clf()
 
     if(dd):
         y, x = np.meshgrid(np.linspace(xStart, xEnd , Num), np.linspace(yStart, yEnd, Num))
@@ -85,7 +84,6 @@ if(dd or pp):
         ax.axis([x.min(), x.max(), y.min(), y.max()])
         fig.colorbar(c, ax=ax)
         plt.savefig("pic/"+name+"_density"+".png")
-        plt.clf()
 else:
     file.close()
 
