@@ -8,7 +8,7 @@
 
 ## General info
 
-Calculates energies and drows plot of molecular orbitals for small molecules (up to 3-4 nucleons) form hydrogen to neon.
+Calculates energies and drows plot of molecular orbitals for small and medium molecules, for nucleons: H to Ca, Ti and Fe.
 	
 ## Setup
 
@@ -55,13 +55,13 @@ Now you can run bash script with example input like this:
 $ chmod +x HF.sh
 $ ./HF.sh examples/H2O.txt out.txt
 ```
-Output will be find in out.txt and molecular orbitals grqphs in pic folder.
+Output will be find in out.txt and molecular orbitals graphs in pic folder.
 
 ## Input file
 
 For example:
 ```
-HF MO_GRAPHS DENSITY_GRAPH 
+HF2 MO_GRAPHS DENSITY_GRAPH 
 *xyz 0 1
 Li 	0.0000 	0.0000 	0.0000
 H 	0.0000 	0.0000 	1.5949
@@ -70,9 +70,12 @@ H 	0.0000 	0.0000 	1.5949
 *name LiH *
 *plain yz *
 ```
-You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne ].
+You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Ti, Fe ].
 All positions are in angstroms.
-
+HF / HF1 - uses simple basis set
+HF2 - uses more complex basis set
+The upper limit for number of functions used in calculation is about 190/200 - depends from RAM memory.
+No upper limit for primitives.
 
 ## H2O orbital
 

@@ -1,0 +1,6 @@
+HF2
+*xyz 0 1
+Fe	0.0000 	0.0000 	0.0000
+*
+*name Fe *
+*plain yz *

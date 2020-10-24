@@ -1,9 +1,0 @@
-HF2 MO_GRAPHS DENSITY_GRAPH 
-*xyz 0 1
-Li 	0.0000 	0.0000 	0.0000
-H 	0.0000 	0.0000 	1.5949
-
-*
-*name LiH *
-*plain yz *
-

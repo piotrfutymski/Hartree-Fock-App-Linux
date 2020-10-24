@@ -1,9 +1,0 @@
-HF2 MO_GRAPHS DENSITY_GRAPH 
-*xyz 0 1
-He 	0.0000 	0.0000 	0.0000
-He 	0.0000 	0.0000 	0.7414 
-
-*
-*name He2 *
-*plain yz *
-

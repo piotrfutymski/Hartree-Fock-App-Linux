@@ -9,7 +9,9 @@
 #define ERROR 1.0e-6
 
 
-constexpr int NUCLEON_COUNT = 10;
+constexpr int NUCLEON_COUNT = 26;
 const std::string NUCLEON_TAB[] ={
-    "X","H","He","Li","Be","B","C","N","O","F","Ne"  
+    "X","H","He","Li","Be","B","C","N","O","F","Ne",
+    "Na","Mg","Al","Si","P","S","Cl","Ar",
+    "K","Ca","X","Ti","X","X","X","Fe"
 };

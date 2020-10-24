@@ -1,0 +1,7 @@
+HF2 MO_GRAPHS
+*xyz 0 1
+Ca 	0.000 	0.000   0.567
+C	0.000 	0.000 	-1.891
+*
+*name CaC *
+*plain yz *

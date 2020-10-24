@@ -1,0 +1,7 @@
+HF2 MO_GRAPHS
+*xyz 0 1
+Ti 	0.000 	0.000   0.437
+O	0.000 	0.000 	-1.203
+*
+*name TiO *
+*plain yz *

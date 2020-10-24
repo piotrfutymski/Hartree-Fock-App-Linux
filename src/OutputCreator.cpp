@@ -40,17 +40,6 @@ void OutputCreator::createOutputFile(Logger & logger, Mol & mol, InputParser & p
         logger.log("\t");
     }
     logger.log("\n");
-    logger.log("HOMO energy:\t");
-    logger.log(std::to_string(mol.getHOMOEnergy()));
-    logger.log("\n");
-    logger.log("LUMO energy:\t");
-    logger.log(std::to_string(mol.getLUMOEnergy()));
-    logger.log("\n");
-    logger.log("Gap between HOMO and LUMO:\t");
-    logger.log(std::to_string(mol.getLUMOEnergy() - mol.getHOMOEnergy()));
-    logger.log("\t=\t");
-    logger.log(std::to_string(HARTREE_TO_ELECTRONOVOLTS*(mol.getLUMOEnergy() - mol.getHOMOEnergy())));
-    logger.log("eV\n");
     logger.log("--------------------------------------------------------------\n");
 }
 
@@ -95,21 +84,27 @@ void OutputCreator::createMOPlainFiles(Mol & mol, InputParser & parser)
 
     }
     
-    minX -=0.8;
-    maxX +=0.8;
-    minY -=0.8;
-    maxY +=0.8;
+    minX -=1.0;
+    maxX +=1.0;
+    minY -=1.0;
+    maxY +=1.0;
 
     _xPoints = (maxX-minX)/parser.getSameplDensity();
     _yPoints = (maxY-minY)/parser.getSameplDensity();
     if(_xPoints < _yPoints)
+    {
+        _xMin = minX - (_yPoints-_xPoints)*parser.getSameplDensity()/2;
+        minX = _xMin;
         _xPoints = _yPoints;
+        _yMin = minY;
+    }       
     else
+    {   
+        _yMin = minY - (_xPoints-_yPoints)*parser.getSameplDensity()/2;
+        minY = _yMin;
         _yPoints = _xPoints;
-    
-
-    _xMin = minX;
-    _yMin = minY;
+        _xMin = minX;
+    }
 
     for (int i = 0; i < mol.getMOcount(); i++)
 	{
@@ -187,19 +182,28 @@ void OutputCreator::createDPlainFile(Mol & mol, InputParser & parser)
 
     }
     
-    minX -=0.8;
-    maxX +=0.8;
-    minY -=0.8;
-    maxY +=0.8;
+    minX -=1.0;
+    maxX +=1.0;
+    minY -=1.0;
+    maxY +=1.0;
 
     _xPoints = (maxX-minX)/parser.getSameplDensity();
     _yPoints = (maxY-minY)/parser.getSameplDensity();
     if(_xPoints < _yPoints)
+    {
+        _xMin = minX - (_yPoints-_xPoints)*parser.getSameplDensity()/2;
+        minX = _xMin;
         _xPoints = _yPoints;
+        _yMin = minY;
+    }       
     else
+    {   
+        _yMin = minY - (_xPoints-_yPoints)*parser.getSameplDensity()/2;
+        minY = _yMin;
         _yPoints = _xPoints;
-    _xMin = minX;
-    _yMin = minY;
+        _xMin = minX;
+    }
+
 
 
 	std::fstream file("int/dplain.txt", std::ios::trunc | std::ios::out);
