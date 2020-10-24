@@ -71,10 +71,15 @@ H 	0.0000 	0.0000 	1.5949
 *plain yz *
 ```
 You can change/add nucleons and positions. Choose from: [ H He Li Be B C N O F Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Ti, Fe ].
+
 All positions are in angstroms.
+
 HF / HF1 - uses simple basis set
+
 HF2 - uses more complex basis set
+
 The upper limit for number of functions used in calculation is about 190/200 - depends from RAM memory.
+
 No upper limit for primitives.
 
 ## H2O orbital
