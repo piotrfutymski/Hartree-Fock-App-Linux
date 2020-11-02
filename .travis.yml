@@ -4,6 +4,14 @@ compiler:
   - gcc
 
 before_script:
+  - wget https://sourceforge.net/projects/arma/files/armadillo-10.1.1.tar.xz/download
+  - tar -xvf download
+  - cd armadillo-10.1.1
+  - cmake .
+  - make
+  - make install  
+  - cd ..
+  
   # create a build folder for the out-of-source build
   - mkdir build
   # switch to build directory
