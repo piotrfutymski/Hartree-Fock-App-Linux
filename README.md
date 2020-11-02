@@ -1,4 +1,4 @@
-# Hartree Fock App
+# Hartree Fock App https://travis-ci.com/piotrfutymski/Hartree-Fock-App-Linux.svg?branch=master
 
 ## Table of contents
 * [General info](#general-info)
