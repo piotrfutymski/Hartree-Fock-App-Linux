@@ -59,6 +59,8 @@ if(dd or pp):
             ax.set_title(name+"_"+str(a))
 
             ax.axis([x.min(), x.max(), y.min(), y.max()])
+            ax.set_ylabel('Distance [A]')
+            ax.set_xlabel('Distance [A]')
             fig.colorbar(c, ax=ax)
             plt.savefig("pic/"+name+"_"+str(a)+".png")
             plt.clf()
@@ -83,6 +85,8 @@ if(dd or pp):
         ax.set_title(name+"_density")
 
         ax.axis([x.min(), x.max(), y.min(), y.max()])
+        ax.set_ylabel('Distance [A]')
+        ax.set_xlabel('Distance [A]')
         fig.colorbar(c, ax=ax)
         plt.savefig("pic/"+name+"_density"+".png")
         plt.clf()
