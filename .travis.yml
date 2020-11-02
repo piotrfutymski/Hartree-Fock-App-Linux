@@ -3,15 +3,7 @@ language: cpp
 compiler:
   - gcc
 
-before_script:
-  - wget https://sourceforge.net/projects/arma/files/armadillo-10.1.1.tar.xz/download
-  - tar -xvf download
-  - cd armadillo-10.1.1
-  - cmake .
-  - make
-  - make install  
-  - cd ..
-  
+before_script: 
   # create a build folder for the out-of-source build
   - mkdir build
   # switch to build directory
@@ -20,8 +12,14 @@ before_script:
   # top-level CMakeLists.txt is located at '..'
   - cmake ..
   
-install: make get-deps
-
+install: 
+   - wget https://sourceforge.net/projects/arma/files/armadillo-10.1.1.tar.xz/download
+  - tar -xvf download
+  - cd armadillo-10.1.1
+  - cmake .
+  - make
+  - make install  
+  - cd ..
 script:
   # once CMake has done its job we just build using make as usual
   - make
