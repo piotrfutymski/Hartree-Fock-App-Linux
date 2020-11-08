@@ -25,6 +25,8 @@ public:
 
     void createDPlainFile(Mol & mol, InputParser & parser);
 
+    void createDPlainFileCompare(Mol & molA,Mol & molB, InputParser & parser);
+
     void createScriptOutputFile(Mol & mol, InputParser & parser);
 
     void createScriptOutputFileCompare(Mol & molA, Mol & molB, InputParser & parser);

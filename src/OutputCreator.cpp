@@ -353,6 +353,104 @@ void OutputCreator::createDPlainFile(Mol & mol, InputParser & parser)
     file.close();
 }
 
+void OutputCreator::createDPlainFileCompare(Mol & molA,Mol & molB, InputParser & parser)
+{
+    double minX =1000;
+    double minY =1000;
+    double maxX =-1000;
+    double maxY =-1000;
+
+    for (int i = 0; i < parser.getNucleons().size(); i++)
+    {
+        if(parser.getPlane()==InputParser::Plane::XY || parser.getPlane()==InputParser::Plane::XZ)
+        {
+            if(parser.getNucleons()[i].p.x < minX)
+                minX = parser.getNucleons()[i].p.x;
+            if(parser.getNucleons()[i].p.x > maxX)
+                maxX = parser.getNucleons()[i].p.x;
+        }
+        else
+        {
+            if(parser.getNucleons()[i].p.y < minX)
+                minX = parser.getNucleons()[i].p.y;
+            if(parser.getNucleons()[i].p.y > maxX)
+                maxX = parser.getNucleons()[i].p.y;
+        }
+        
+        if(parser.getPlane()==InputParser::Plane::XY)
+        {
+            if(parser.getNucleons()[i].p.y < minY)
+                minY = parser.getNucleons()[i].p.y;
+            if(parser.getNucleons()[i].p.y > maxY)
+                maxY = parser.getNucleons()[i].p.y;
+        }
+        else
+        {
+            if(parser.getNucleons()[i].p.z < minY)
+                minY = parser.getNucleons()[i].p.z;
+            if(parser.getNucleons()[i].p.z > maxY)
+                maxY = parser.getNucleons()[i].p.z;
+        }   
+
+    }
+    
+    minX -=1.0;
+    maxX +=1.0;
+    minY -=1.0;
+    maxY +=1.0;
+
+    _xPoints = (maxX-minX)/parser.getSameplDensity();
+    _yPoints = (maxY-minY)/parser.getSameplDensity();
+    if(_xPoints < _yPoints)
+    {
+        _xMin = minX - (_yPoints-_xPoints)*parser.getSameplDensity()/2;
+        minX = _xMin;
+        _xPoints = _yPoints;
+        _yMin = minY;
+    }       
+    else
+    {   
+        _yMin = minY - (_xPoints-_yPoints)*parser.getSameplDensity()/2;
+        minY = _yMin;
+        _yPoints = _xPoints;
+        _xMin = minX;
+    }
+
+
+
+	std::fstream file("int/dplain.txt", std::ios::trunc | std::ios::out);
+	for(int j = 0; j < _xPoints; j++)
+	{
+		for(int k = 0; k < _yPoints; k++)
+		{
+            double x,y,z;
+            if(parser.getPlane()==InputParser::Plane::XY)
+            {
+                x = minX + j * parser.getSameplDensity();
+                y = minY + k * parser.getSameplDensity();
+                z = parser.getShift();
+            }
+            else if(parser.getPlane()==InputParser::Plane::XZ)
+            {
+                x = minX + j * parser.getSameplDensity();
+                z = minY + k * parser.getSameplDensity();
+                y = parser.getShift();
+            }
+            else if(parser.getPlane()==InputParser::Plane::YZ)
+            {
+                y = minX + j * parser.getSameplDensity();
+                z = minY + k * parser.getSameplDensity();
+                x = parser.getShift();
+            }
+
+			auto v = molA.countDencity({ x,y,z }) - molB.countDencity({ x,y,z });
+			file << v <<"\n";
+		}
+
+	}
+    file.close();
+}
+
 void OutputCreator::createScriptOutputFile(Mol & mol, InputParser & parser)
 {
     std::fstream file("int/pyinp.txt", std::ios::trunc | std::ios::out);
@@ -383,7 +481,7 @@ void OutputCreator::createScriptOutputFile(Mol & mol, InputParser & parser)
 void OutputCreator::createScriptOutputFileCompare(Mol & molA, Mol & molB, InputParser & parser)
 {
     std::fstream file("int/pyinp.txt", std::ios::trunc | std::ios::out);
-    file << "p\n";
+    file << "t\n";
     file << molA.getMOcount()<<"\n";
     file << _xMin<<"\n"<<_yMin<<"\n"<<_xPoints<<"\n"<<_yPoints<<"\n"<<parser.getSameplDensity()<<"\n";
     file << parser.getMOName()<<"\n";  

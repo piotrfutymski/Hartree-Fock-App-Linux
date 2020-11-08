@@ -53,6 +53,7 @@ void App::compareBasisComputation(const std::string & outputFile, const InputPar
     _logger.close();
 
     _outputCreator.createMOPlainFilesCompare(molA, molB, _parser);
+    _outputCreator.createDPlainFileCompare(molA, molB, _parser);
 
     _outputCreator.createScriptOutputFileCompare(molA, molB, _parser);
 }
