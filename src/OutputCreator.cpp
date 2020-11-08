@@ -247,7 +247,7 @@ void OutputCreator::createMOPlainFilesCompare(Mol & molA, Mol & molB, InputParse
                     x = parser.getShift();
                 }
 
-				auto v = (molA.countMolecularFunction(i, { x,y,z })) - (molB.countMolecularFunction(i, { x,y,z }));
+				auto v = fabs(fabs(molA.countMolecularFunction(i, { x,y,z })) - fabs(molB.countMolecularFunction(i, { x,y,z })));
 				file << v <<"\n";
 			}
 		}
