@@ -23,8 +23,8 @@ private:
 
 private:
 
-    void singlePointComputation();
+    void singlePointComputation(const std::string & outputFile, const InputParser & parser);
 
-    void opt2Computation();
+    void compareBasisComputation(const std::string & outputFile, const InputParser & parser);
 
 };

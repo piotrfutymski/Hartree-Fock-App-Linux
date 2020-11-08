@@ -44,7 +44,7 @@ public:
 
     std::string getInput()const;
 
-    bool getApproxFlag()const;
+    bool getCompareFlag()const;
     bool getOptFlag()const;
     bool getMOGraphFlag()const;
     bool getDGraphFlag()const;
@@ -68,7 +68,7 @@ private:
     
     //flags
 
-    bool _approxFarIntegrals{false};
+    bool _twoBasisComputation{false};
     bool _HFOPT2{false};
     bool _MOGRAPHS{false};
     bool _DGRAPH{false};

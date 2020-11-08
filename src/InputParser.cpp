@@ -91,9 +91,9 @@ std::string InputParser::getInput()const
     return _input;
 }
 
-bool InputParser::getApproxFlag()const
+bool InputParser::getCompareFlag()const
 {
-    return _approxFarIntegrals;
+    return _twoBasisComputation;
 }
 bool InputParser::getOptFlag()const
 {
@@ -116,6 +116,8 @@ std::string InputParser::readHeader(std::ifstream & file)
         ;
     else if(tmp == "HF2")
         _HFOPT2 = true;
+    else if(tmp == "HFC")
+        _twoBasisComputation = true;
     else
         throw InputFileException();
     
@@ -126,8 +128,6 @@ std::string InputParser::readHeader(std::ifstream & file)
             _MOGRAPHS = true;
         else if(tmp == "DENSITY_GRAPH")
             _DGRAPH = true;
-        else if(tmp == "APPROX")
-            _approxFarIntegrals = true;
     }
     return tmp;
 }

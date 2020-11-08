@@ -17,11 +17,17 @@ public:
 
     void createOutputFile(Logger & logger, Mol & mol, InputParser & parser);
 
+    void createOutputFileCompare(Logger & logger, Mol & molA, Mol & B, InputParser & parser);
+
     void createMOPlainFiles(Mol & mol, InputParser & parser);
+
+    void createMOPlainFilesCompare(Mol & molA, Mol & molB, InputParser & parser);
 
     void createDPlainFile(Mol & mol, InputParser & parser);
 
     void createScriptOutputFile(Mol & mol, InputParser & parser);
+
+    void createScriptOutputFileCompare(Mol & molA, Mol & molB, InputParser & parser);
 
 private:
 
