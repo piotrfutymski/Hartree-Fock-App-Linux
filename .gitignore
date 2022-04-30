@@ -4,7 +4,11 @@ build/*
 CMakeFiles/*
 *.png
 out.txt
+CMakeCache.txt
+*.cmake
+*.tcl
 
+Makefile
 .*
 src/__pycache__
 !.gitignores
